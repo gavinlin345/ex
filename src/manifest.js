@@ -37,7 +37,11 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['sidePanel', 'storage'],
+  permissions: ['sidePanel', 'storage', 'scripting', 'notifications',"activeTab"],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   chrome_url_overrides: {
     newtab: 'newtab.html',
   },

@@ -15,11 +15,83 @@ onMounted(() => {
     }
   })
 })
+
+// 选项选择的处理函数
+const selectedOption = ref(null)
+
+// 处理选项选择
+const selectOption = (option) => {
+  selectedOption.value = option
+}
+function runMiScript() {
+  button = document.getElementById("DEVICE_QUICK_CONTROL");
+  button.click();
+  searchInput = document.getElementById('deviceSearch');
+  searchInput.value = "咖啡動態"
+  function miScript() {
+    console.log(3333);
+  }
+  miScript();
+}
+
+
+const submitSelection = async () => {
+  notify(1234);
+  const [tab] = await chrome.tabs.query({
+    active: true,
+    lastFocusedWindow: true
+  });
+  const tabId = tab.id;
+  console.log('tabId:', tabId);
+  chrome.scripting
+    .executeScript({
+      target : {tabId : tabId},
+      func : runMiScript,
+    })
+    .then(() => console.log("injected a function"));
+  if (selectedOption.value) {
+    console.log('Selected option:', selectedOption.value);
+  } else {
+    console.warn('Please select an option before submitting.');
+  }
+}
+
+
+const notify = (msg) => {
+  chrome.notifications.create('customNotificationId'+ Math.random(), {
+    type: 'basic',
+    iconUrl: 'img/notify48.png',
+    title: 'My Extension',
+    message: "msg" + msg
+  });
+
+}
 </script>
 
 <template>
   <main>
     <h3>SidePanel Page</h3>
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
+        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</button>
+        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <!-- btn -->
+        <div class="d-grid gap-2">
+          <button class="btn btn-info btn-lg" @click="selectOption('Option 1')">Option 1</button>
+          <button class="btn btn-info btn-lg" @click="selectOption('Option 2')">Option 2</button>
+          <button class="btn btn-info btn-lg" @click="selectOption('Option 3')">Option 3</button>
+          <!-- Submit -->
+          <button class="btn btn-success btn-lg mt-3" @click="submitSelection">Submit</button>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">...</div>
+      <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+    </div>
 
     <h4>Count from Popup: {{ countSync }}</h4>
 
@@ -28,57 +100,4 @@ onMounted(() => {
 </template>
 
 <style>
-:root {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Open Sans',
-    'Helvetica Neue',
-    sans-serif;
-
-  color-scheme: light dark;
-  background-color: #242424;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    background-color: #fafafa;
-  }
-
-  a:hover {
-    color: #42b983;
-  }
-}
-
-body {
-  min-width: 20rem;
-}
-
-main {
-  text-align: center;
-  padding: 1em;
-  margin: 0 auto;
-}
-
-h3 {
-  color: #42b983;
-  text-transform: uppercase;
-  font-size: 1.5rem;
-  font-weight: 200;
-  line-height: 1.2rem;
-  margin: 2rem auto;
-}
-
-a {
-  font-size: 0.5rem;
-  margin: 0.5rem;
-  color: #cccccc;
-  text-decoration: none;
-}
 </style>
